@@ -1,0 +1,57 @@
+# My Code for part07-11_screen_time
+# dt.datetime(); dt.timedelta(); dt.datetime.strftime(); dt.datetime.strptime()
+
+import datetime as dt
+
+if True: 
+    file_name = input('Filename: ')
+    input_date = input('Starting date:')
+    days = int(input('How many days:'))
+else:
+    file_name = 'late_june.txt'
+    input_date = '24.6.2020'
+    days = int(1)
+
+starting_date_obj = dt.datetime.strptime(input_date,'%d.%m.%Y').date() # datetime obj
+date = starting_date_obj.day # --int
+month = starting_date_obj.month
+year = starting_date_obj.year
+
+# print(f'starting_date_obj={starting_date_obj}, days={days}')
+
+
+print('Please type in screen time in minutes on each day (TV computer mobile):')
+min_dict = {}
+total_min = 0
+for num in range(days):
+    show_date_obj = starting_date_obj + dt.timedelta(days=num) # 不可以简单用show_date = date + num，跨月报错
+    show_date_str = show_date_obj.strftime('%d.%m.%Y')
+
+    input_min = input(f'Screen time {show_date_str}: ') # --str
+    min_list = [int(item) for item in input_min.split(' ')] # --list of int
+    total_min += sum(min_list)
+
+    min_dict[num] = (show_date_str, min_list)
+
+# print(f'min_dict={min_dict},\n total_min = {total_min}')
+
+start = dt.datetime.strptime(min_dict[0][0],'%d.%m.%Y')
+start_str = start.strftime('%d.%m.%Y')
+end = dt.datetime.strptime(min_dict[days-1][0], '%d.%m.%Y')
+end_str = end.strftime('%d.%m.%Y')
+                             
+# print(f'Time period: {start_str}-{end_str}')
+# print(f'Total minutes: {total_min}')
+# print(f'Average minutes: {total_min/days}')
+
+with open (file_name,'w') as file:
+    file.write(f'Time period: {start_str}-{end_str}\n')
+    file.write(f'Total minutes: {total_min}\n')
+    file.write(f'Average minutes: {total_min/days}\n')
+    for num in range(days):
+        dates_list = min_dict[num][1]
+        line = '/'.join(map(str, dates_list))
+        this_day = dt.datetime.strptime(min_dict[num][0],'%d.%m.%Y')
+        this_day_str = this_day.strftime('%d.%m.%Y')
+        file.write(f'{this_day_str}: {line}\n')
+        
